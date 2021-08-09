@@ -1,4 +1,4 @@
-# wso2-custom-email-event-adapter
+# wso2-custom-email-output-event-adapter
 
 Custom Email Output Event Adapter to add users in the cc list based on the subject.
 
@@ -18,6 +18,7 @@ hostname= "smtp.gmail.com"
 port= 587 
 enable_start_tls= true 
 enable_authentication= true
+signature = "wso2.com"
 ```
 - Open the <IS-HOME>/repository/deployment/server/eventpublishers/EmailPublisher.xml file and update it as below,
 ```
@@ -34,6 +35,5 @@ enable_authentication= true
     <property name="email.subject">{{subject}}</property>
   </to>
 </eventPublisher>
-
 ```
 - Restart WSO2 IS.
