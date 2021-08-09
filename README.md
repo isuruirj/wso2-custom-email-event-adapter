@@ -10,15 +10,17 @@ Note: This is implemented for WSO2IS-5.10.0. If you want to use it in some other
     - org.wso2.custom.event.output.adapter.email-1.0.jar
 - Configure the Output Adapter Event by adding following lines into deployment.toml file.
 ```
-[output_adapter.customEmail] 
-from_address= "xxxxxxxx" 
-username= "xxxxxxxx" 
-password= "xxxxxxxx" 
-hostname= "smtp.gmail.com" 
-port= 587 
-enable_start_tls= true 
-enable_authentication= true
-signature = "wso2.com"
+[[output_adapter.custom_output_adapter]]
+type = "customEmail"
+[output_adapter.custom_output_adapter.properties]
+"mail.smtp.from" = "wso2iamtest@gmail.com"
+"mail.smtp.user" = "xxxxxxxx"
+"mail.smtp.password" = "xxxxxxxx"
+"mail.smtp.host" = "smtp.gmail.com"
+"mail.smtp.port" = 587
+"mail.smtp.starttls.enable" = true
+"mail.smtp.auth" = true
+"mail.smtp.signature" = "ABC.com"
 ```
 - Open the <IS-HOME>/repository/deployment/server/eventpublishers/EmailPublisher.xml file and update it as below,
 ```
