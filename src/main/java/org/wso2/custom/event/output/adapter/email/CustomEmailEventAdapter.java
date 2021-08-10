@@ -1,6 +1,7 @@
 package org.wso2.custom.event.output.adapter.email;
 
 import org.apache.axis2.transport.mail.MailConstants;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
@@ -10,7 +11,6 @@ import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterConfiguration
 import org.wso2.carbon.event.output.adapter.core.exception.ConnectionUnavailableException;
 import org.wso2.carbon.event.output.adapter.core.exception.OutputEventAdapterException;
 import org.wso2.carbon.event.output.adapter.core.exception.TestConnectionNotSupportedException;
-import org.wso2.carbon.event.output.adapter.email.internal.util.EmailEventAdapterConstants;
 
 import javax.mail.*;
 import javax.mail.internet.AddressException;
@@ -37,7 +37,6 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
     private int tenantId;
-    private static final String CUSTOM_ADAPTER_TYPE_EMAIL = "WSO2 - Create Password for New Account";
 
     /**
      * Default from address for outgoing messages.
@@ -80,30 +79,30 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
             int jobQueSize;
 
             //If global properties are available those will be assigned else constant values will be assigned
-            if (globalProperties.get(EmailEventAdapterConstants.MIN_THREAD_NAME) != null) {
-                minThread = Integer.parseInt(globalProperties.get(EmailEventAdapterConstants.MIN_THREAD_NAME));
+            if (globalProperties.get(CustomEmailEventAdapterConstants.MIN_THREAD_NAME) != null) {
+                minThread = Integer.parseInt(globalProperties.get(CustomEmailEventAdapterConstants.MIN_THREAD_NAME));
             } else {
-                minThread = EmailEventAdapterConstants.MIN_THREAD;
+                minThread = CustomEmailEventAdapterConstants.MIN_THREAD;
             }
 
-            if (globalProperties.get(EmailEventAdapterConstants.MAX_THREAD_NAME) != null) {
-                maxThread = Integer.parseInt(globalProperties.get(EmailEventAdapterConstants.MAX_THREAD_NAME));
+            if (globalProperties.get(CustomEmailEventAdapterConstants.MAX_THREAD_NAME) != null) {
+                maxThread = Integer.parseInt(globalProperties.get(CustomEmailEventAdapterConstants.MAX_THREAD_NAME));
             } else {
-                maxThread = EmailEventAdapterConstants.MAX_THREAD;
+                maxThread = CustomEmailEventAdapterConstants.MAX_THREAD;
             }
 
-            if (globalProperties.get(EmailEventAdapterConstants.ADAPTER_KEEP_ALIVE_TIME_NAME) != null) {
+            if (globalProperties.get(CustomEmailEventAdapterConstants.ADAPTER_KEEP_ALIVE_TIME_NAME) != null) {
                 defaultKeepAliveTime = Integer.parseInt(globalProperties.get(
-                        EmailEventAdapterConstants.ADAPTER_KEEP_ALIVE_TIME_NAME));
+                        CustomEmailEventAdapterConstants.ADAPTER_KEEP_ALIVE_TIME_NAME));
             } else {
-                defaultKeepAliveTime = EmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_IN_MILLS;
+                defaultKeepAliveTime = CustomEmailEventAdapterConstants.DEFAULT_KEEP_ALIVE_TIME_IN_MILLS;
             }
 
-            if (globalProperties.get(EmailEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME) != null) {
+            if (globalProperties.get(CustomEmailEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME) != null) {
                 jobQueSize = Integer.parseInt(globalProperties.get(
-                        EmailEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME));
+                        CustomEmailEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME));
             } else {
-                jobQueSize = EmailEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE;
+                jobQueSize = CustomEmailEventAdapterConstants.ADAPTER_EXECUTOR_JOB_QUEUE_SIZE;
             }
 
             threadPoolExecutor = new ThreadPoolExecutor(minThread, maxThread, defaultKeepAliveTime,
@@ -148,9 +147,9 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
             //Verifying default SMTP properties of the SMTP server.
 
             smtpFrom = props.getProperty(MailConstants.MAIL_SMTP_FROM);
-            smtpHost = props.getProperty(EmailEventAdapterConstants.MAIL_SMTP_HOST);
-            smtpPort = props.getProperty(EmailEventAdapterConstants.MAIL_SMTP_PORT);
-            signature = props.getProperty(EmailEventAdapterConstants.MAIL_SMTP_SIGNATURE);
+            smtpHost = props.getProperty(CustomEmailEventAdapterConstants.MAIL_SMTP_HOST);
+            smtpPort = props.getProperty(CustomEmailEventAdapterConstants.MAIL_SMTP_PORT);
+            signature = props.getProperty(CustomEmailEventAdapterConstants.MAIL_SMTP_SIGNATURE);
             if (smtpFrom == null) {
                 String msg = "failed to connect to the mail server due to null smtpFrom value";
                 throw new ConnectionUnavailableException("The adapter " +
@@ -170,7 +169,7 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
                         ("The adapter " + eventAdapterConfiguration.getName() + " " + msg);
             }
 
-            String replyTo = props.getProperty(EmailEventAdapterConstants.MAIL_SMTP_REPLY_TO);
+            String replyTo = props.getProperty(CustomEmailEventAdapterConstants.MAIL_SMTP_REPLY_TO);
             if (replyTo != null) {
 
                 try {
@@ -226,15 +225,16 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
         //Get subject and emailIds from dynamic properties
-        String subject = dynamicProperties.get(EmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_SUBJECT);
-        String[] emailIds = dynamicProperties.get(EmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_ADDRESS)
-                .replaceAll(" ", "").split(EmailEventAdapterConstants.EMAIL_SEPARATOR);
-        String emailType = dynamicProperties.get(EmailEventAdapterConstants.APAPTER_MESSAGE_EMAIL_TYPE);
+        String subject = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_SUBJECT);
+        String[] emailIds = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_ADDRESS)
+                .replaceAll(" ", "").split(CustomEmailEventAdapterConstants.EMAIL_SEPARATOR);
+        String emailType = dynamicProperties.get(CustomEmailEventAdapterConstants.APAPTER_MESSAGE_EMAIL_TYPE);
+        String ccEmail = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_CC_EMAIL);
 
         //Send email for each emailId
         for (String email : emailIds) {
             try {
-                threadPoolExecutor.submit(new CustomEmailSender(email, subject, message.toString(), emailType));
+                threadPoolExecutor.submit(new CustomEmailSender(email, subject, message.toString(), emailType, ccEmail));
             } catch (RejectedExecutionException e) {
                 EventAdapterUtil.logAndDrop(eventAdapterConfiguration.getName(), message, "Job queue is full", e, log,
                         tenantId);
@@ -263,14 +263,15 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
         String subject;
         String body;
         String type;
-        String userStoreDomain;
+        String ccEmail;
 
-        CustomEmailSender(String to, String subject, String body, String type) {
+        CustomEmailSender(String to, String subject, String body, String type, String ccEmail) {
 
             this.to = to;
             this.subject = subject;
             this.body = body;
             this.type = type;
+            this.ccEmail = ccEmail;
         }
 
         /**
@@ -308,8 +309,8 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
                 message.addRecipient(Message.RecipientType.TO,
                         new InternetAddress(to));
 
-                if (CUSTOM_ADAPTER_TYPE_EMAIL.equals(subject)) {
-                    message.addRecipient(Message.RecipientType.CC, new InternetAddress("amala@wso2.com"));
+                if (!StringUtils.isBlank(ccEmail)){
+                    message.addRecipient(Message.RecipientType.CC, new InternetAddress(ccEmail));
                 }
 
                 message.setSubject(subject);

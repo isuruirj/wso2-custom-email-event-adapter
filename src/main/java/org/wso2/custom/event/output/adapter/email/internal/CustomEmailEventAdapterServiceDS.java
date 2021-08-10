@@ -10,7 +10,7 @@ import org.wso2.carbon.event.output.adapter.core.OutputEventAdapterFactory;
 import org.wso2.custom.event.output.adapter.email.CustomEmailAdapterFactory;
 
 /**
- * @scr.component component.name="custom.output.Email.AdapterService.component" immediate="true"
+ * @scr.component component.name="custom.output.email.adapter.service.component" immediate="true"
  */
 @Component(
         name = "custom.output.email.adapter.service.component",
@@ -32,14 +32,6 @@ public class CustomEmailEventAdapterServiceDS {
             }
         } catch (RuntimeException e) {
             log.error("Can not create the output Email event adaptor service ", e);
-        }
-    }
-
-    @Deactivate
-    protected void deactivate(ComponentContext context) {
-
-        if (log.isDebugEnabled()) {
-            log.debug("Custom CustomEmailEventAdapterServiceDS Component is deactivated.");
         }
     }
 
