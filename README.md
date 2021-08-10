@@ -35,7 +35,6 @@ type = "customEmail"
     <property name="email.address">{{send-to}}</property>
     <property name="email.type">{{content-type}}</property>
     <property name="email.subject">{{subject}}</property>
-    <property name="email.cc.address">{{cc-to}}</property>
   </to>
 </eventPublisher>
 ```
