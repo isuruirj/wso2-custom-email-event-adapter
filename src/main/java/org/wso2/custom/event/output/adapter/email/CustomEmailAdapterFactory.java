@@ -113,14 +113,9 @@ public class CustomEmailAdapterFactory extends EmailEventAdapterFactory {
         format.setDefaultValue(CustomEmailEventAdapterConstants.MAIL_TEXT_PLAIN);
         format.setHint(resourceBundle.getString(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_TYPE_HINT));
 
-        Property ccAddress = new Property(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_CC_EMAIL);
-        ccAddress.setDisplayName(resourceBundle.getString(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_CC_EMAIL));
-        ccAddress.setRequired(false);
-
         dynamicPropertyList.add(emailAddress);
         dynamicPropertyList.add(subject);
         dynamicPropertyList.add(format);
-        dynamicPropertyList.add(ccAddress);
 
         return dynamicPropertyList;
     }

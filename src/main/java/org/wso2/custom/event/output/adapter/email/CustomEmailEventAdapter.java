@@ -229,7 +229,12 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
         String[] emailIds = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_ADDRESS)
                 .replaceAll(" ", "").split(CustomEmailEventAdapterConstants.EMAIL_SEPARATOR);
         String emailType = dynamicProperties.get(CustomEmailEventAdapterConstants.APAPTER_MESSAGE_EMAIL_TYPE);
-        String ccEmail = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_CC_EMAIL);
+        String ccEmail = null;
+
+        if (CustomEmailEventAdapterConstants.APPLICABLE_SUBJECT.equalsIgnoreCase(subject)){
+            //You need to implement the logic here. Implement the required logic to identify CC email address.
+
+        }
 
         //Send email for each emailId
         for (String email : emailIds) {

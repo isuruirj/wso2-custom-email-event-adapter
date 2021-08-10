@@ -9,7 +9,6 @@ public class CustomEmailEventAdapterConstants {
     public static final String ADAPTER_MESSAGE_EMAIL_ADDRESS_HINT = "emailAddress.hint";
     public static final String ADAPTER_MESSAGE_EMAIL_SUBJECT = "email.subject";
     public static final String APAPTER_MESSAGE_EMAIL_TYPE = "email.type";
-    public static final String ADAPTER_MESSAGE_CC_EMAIL = "email.cc.address";
     public static final String ADAPTER_MESSAGE_EMAIL_TYPE_HINT = "emailType.hint";
     public static final String ADAPTER_EMAIL_SMTP_PORT = "mail.smtp.port";
     public static final String ADAPTER_EMAIL_SMTP_USER  = "mail.smtp.user";
@@ -28,6 +27,7 @@ public class CustomEmailEventAdapterConstants {
     public static final String ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME = "jobQueueSize";
     public static final int ADAPTER_EXECUTOR_JOB_QUEUE_SIZE = 2000;
     public static final String CUSTOM_ADAPTER_TYPE_EMAIL = "customEmail";
+    public static final String APPLICABLE_SUBJECT = "WSO2 - Create Password for New Account";
 
 
     /**
