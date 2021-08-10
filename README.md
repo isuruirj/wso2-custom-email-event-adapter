@@ -1,6 +1,6 @@
 # wso2-custom-email-output-event-adapter
 
-Custom Email Output Event Adapter to add users in the cc list based on the subject.
+Custom Email Output Event Adapter to add users in the cc list.
 
 Note: This is implemented for WSO2IS-5.10.0. If you want to use it in some other WSO2 server, you can simply modify the pom.xml file’s project dependency versions matching the same version packed in the product
 
