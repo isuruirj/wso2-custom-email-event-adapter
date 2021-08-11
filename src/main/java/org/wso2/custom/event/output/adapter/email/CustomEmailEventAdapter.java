@@ -1,6 +1,7 @@
 package org.wso2.custom.event.output.adapter.email;
 
 import org.apache.axis2.transport.mail.MailConstants;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +38,7 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
     private OutputEventAdapterConfiguration eventAdapterConfiguration;
     private Map<String, String> globalProperties;
     private int tenantId;
+    private static final String SIGNATURE_ELEMENT = "###";
 
     /**
      * Default from address for outgoing messages.
@@ -224,17 +226,21 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
     @Override
     public void publish(Object message, Map<String, String> dynamicProperties) {
 
+        //Get cc email from first line of the email template with the value between SIGNATURE_ELEMENT
+        String[] emailLines = message.toString().split("\n",2);
+        String ccEmail = null;
+        if(ArrayUtils.isNotEmpty(emailLines)){
+            ccEmail = StringUtils.substringBetween(emailLines[0],SIGNATURE_ELEMENT,SIGNATURE_ELEMENT);
+        }
+        //Remove the first line if the cc email is defined in the email template
+        if(StringUtils.isNotEmpty(ccEmail) && emailLines.length > 1){
+            message = emailLines[1];
+        }
         //Get subject and emailIds from dynamic properties
         String subject = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_SUBJECT);
         String[] emailIds = dynamicProperties.get(CustomEmailEventAdapterConstants.ADAPTER_MESSAGE_EMAIL_ADDRESS)
                 .replaceAll(" ", "").split(CustomEmailEventAdapterConstants.EMAIL_SEPARATOR);
         String emailType = dynamicProperties.get(CustomEmailEventAdapterConstants.APAPTER_MESSAGE_EMAIL_TYPE);
-        String ccEmail = null;
-
-        if (CustomEmailEventAdapterConstants.APPLICABLE_SUBJECT.equalsIgnoreCase(subject)){
-            //You need to implement the logic here. Implement the required logic to identify CC email address.
-
-        }
 
         //Send email for each emailId
         for (String email : emailIds) {
@@ -314,7 +320,7 @@ public class CustomEmailEventAdapter implements OutputEventAdapter {
                 message.addRecipient(Message.RecipientType.TO,
                         new InternetAddress(to));
 
-                if (!StringUtils.isBlank(ccEmail)){
+                if (!StringUtils.isBlank(ccEmail) && !CustomEmailEventAdapterConstants.CC_PLACEHOLDER.equalsIgnoreCase(ccEmail)){
                     message.addRecipient(Message.RecipientType.CC, new InternetAddress(ccEmail));
                 }
 

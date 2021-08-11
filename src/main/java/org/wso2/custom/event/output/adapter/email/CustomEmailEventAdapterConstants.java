@@ -27,8 +27,7 @@ public class CustomEmailEventAdapterConstants {
     public static final String ADAPTER_EXECUTOR_JOB_QUEUE_SIZE_NAME = "jobQueueSize";
     public static final int ADAPTER_EXECUTOR_JOB_QUEUE_SIZE = 2000;
     public static final String CUSTOM_ADAPTER_TYPE_EMAIL = "customEmail";
-    public static final String APPLICABLE_SUBJECT = "WSO2 - Create Password for New Account";
-
+    public static final String CC_PLACEHOLDER = "{{user.claim.customClaim}}";
 
     /**
      * SMTP property constants.
